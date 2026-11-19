@@ -219,14 +219,3 @@ body.racing{overflow:hidden}
   .endstats{grid-template-columns:1fr 1fr}
 }
 
-/* ===== Rick Roll pop-up ===== */
-.rickroll{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(10,5,30,.8);backdrop-filter:blur(6px);padding:16px}
-.rickroll.show{display:flex;animation:fadeIn .3s}
-.rr-box{background:linear-gradient(160deg,#ff3d7a,#7b2ff7);border-radius:26px;padding:20px;width:min(720px,100%);text-align:center;color:#fff;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:pop .45s}
-.rr-title{font-size:26px;font-weight:700;margin-bottom:14px}
-.rr-title b{color:#ffe14d;display:inline-block;animation:wave .6s ease-in-out infinite}
-.rr-video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}
-.rr-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.rr-count{font-size:20px;font-weight:600;margin-top:12px}
-.rr-bar{height:10px;border-radius:5px;background:rgba(255,255,255,.25);margin-top:10px;overflow:hidden}
-.rr-bar div{height:100%;width:100%;background:#ffe14d}
