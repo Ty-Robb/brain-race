@@ -35,6 +35,51 @@ const Confetti = (() => {
 })();
 window.Confetti = Confetti;
 
+// ---------- Rick Roll (plays for 15 s on a wrong answer) ----------
+const RickRoll = (() => {
+  const RR_SECONDS = 15;
+  let ov = null, timer = 0, then = null;
+  function build() {
+    ov = document.createElement("div");
+    ov.className = "rickroll";
+    ov.innerHTML = `<div class="rr-box">
+        <div class="rr-title">❌ WRONG! You've been… <b>RICK ROLLED!</b> 🕺</div>
+        <div class="rr-video"></div>
+        <div class="rr-count">Back to learning in <b>15</b>…</div>
+        <div class="rr-bar"><div></div></div>
+      </div>`;
+    document.body.appendChild(ov);
+  }
+  return {
+    play(done) {
+      if (!ov) build();
+      then = done;
+      ov.querySelector(".rr-video").innerHTML =
+        '<iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&controls=0&modestbranding=1&rel=0&playsinline=1" allow="autoplay; encrypted-media" title="Never Gonna Give You Up"></iframe>';
+      ov.classList.add("show");
+      const bar = ov.querySelector(".rr-bar div");
+      bar.style.transition = "none"; bar.style.width = "100%"; void bar.offsetWidth;
+      bar.style.transition = `width ${RR_SECONDS}s linear`; bar.style.width = "0%";
+      let left = RR_SECONDS;
+      ov.querySelector(".rr-count b").textContent = left;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        left--;
+        ov.querySelector(".rr-count b").textContent = left;
+        if (left <= 0) this.stop();
+      }, 1000);
+    },
+    stop() {
+      clearInterval(timer);
+      if (!ov) return;
+      ov.classList.remove("show");
+      ov.querySelector(".rr-video").innerHTML = ""; // removing the video stops the music
+      const cb = then; then = null; cb && cb();
+    },
+    get playing() { return !!ov && ov.classList.contains("show"); },
+  };
+})();
+
 // ---------- app state ----------
 const PASS_MARK = 8; // 8 out of 10 = 80%
 const S = { attempts: 0, name: "You", year: 5, subject: "maths", quiz: [], i: 0, score: 0, streak: 0, best: 0, answered: false, hintUsed: false, log: [] };
@@ -203,11 +248,15 @@ function result(ok, extra, explain, qText, answer, given) {
   $("nextBtn").textContent = S.i === 9 ? "See my results 🏆" : "Next ▶";
   setTimeout(() => $("nextBtn").focus(), 50);
   S.log.push({ ok, q: qText, answer, given, explain });
-  if (S.quiz[S.i].type === "spell" && !ok) say(answer);
+  if (!ok) {
+    const isSpell = S.quiz[S.i].type === "spell";
+    RickRoll.play(() => { if (isSpell) say(answer); $("nextBtn").focus(); });
+  }
 }
 
 $("nextBtn").onclick = next;
 function next() {
+  if (RickRoll.playing) return;
   Sfx.click();
   if (S.i < 9) { S.i++; renderQuestion(); }
   else showResults();
