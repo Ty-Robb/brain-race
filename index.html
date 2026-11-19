@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Brain Race — Learn, Quiz, Race!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<button id="muteBtn" class="mute" title="Sound on/off">🔊</button>
+
+<!-- ===== TITLE ===== -->
+<section id="scr-title" class="screen active">
+  <div class="card hero">
+    <div class="logo"><span class="b1">BRAIN</span><span class="b2">RACE</span><span class="flag">🏁</span></div>
+    <p class="tag">Learn something new, ace a 10-question quiz,<br>score <b>80% or more</b> to unlock a 5-minute race against <b>Jo Jo Johnson</b>!</p>
+    <div class="steps">
+      <div><span>1</span>Pick your year</div>
+      <div><span>2</span>Pick a subject</div>
+      <div><span>3</span>Learn &amp; quiz</div>
+      <div><span>4</span>Race! 🏎️</div>
+    </div>
+    <label class="namebox">Your racing name <input id="nameInput" maxlength="14" placeholder="You" autocomplete="off"></label>
+    <button class="big go" id="startBtn">Let's go! ▶</button>
+  </div>
+</section>
+
+<!-- ===== YEAR ===== -->
+<section id="scr-year" class="screen">
+  <div class="card">
+    <h2>What year are you in? 🎒</h2>
+    <p class="sub">We'll pick questions that are just right for you.</p>
+    <div id="yearGrid" class="yeargrid"></div>
+  </div>
+</section>
+
+<!-- ===== SUBJECT ===== -->
+<section id="scr-subject" class="screen">
+  <div class="card">
+    <h2>Choose your subject 📚</h2>
+    <p class="sub" id="subjSub"></p>
+    <div class="subjects">
+      <button class="subj maths" data-s="maths"><div class="ico">🔢</div><b>Maths</b><small>Numbers, shapes &amp; problem solving</small></button>
+      <button class="subj english" data-s="english"><div class="ico">✏️</div><b>English</b><small>Spelling test with rules &amp; tricks</small></button>
+      <button class="subj biology" data-s="biology"><div class="ico">🧬</div><b>Biology</b><small>Living things, the body &amp; cells</small></button>
+    </div>
+    <button class="link" data-back="scr-year">← change year</button>
+  </div>
+</section>
+
+<!-- ===== QUIZ ===== -->
+<section id="scr-quiz" class="screen">
+  <div class="quizwrap">
+    <div class="qtop">
+      <div class="pill" id="qSubject">Maths · Year 5</div>
+      <div class="dots" id="qDots"></div>
+      <div class="pill score">⭐ <span id="qScore">0</span> &nbsp; 🔥 <span id="qStreak">0</span></div>
+    </div>
+    <div class="card qcard" id="qCard">
+      <div class="qnum" id="qNum">Question 1 of 10</div>
+      <div class="topic" id="qTopic"></div>
+      <h2 class="question" id="qText"></h2>
+
+      <!-- multiple choice -->
+      <div id="mcArea" class="options"></div>
+
+      <!-- spelling -->
+      <div id="spellArea" class="spell">
+        <div class="speak">
+          <button class="sbtn" id="sayWord">🔊 Hear the word</button>
+          <button class="sbtn" id="saySlow">🐢 Say it slowly</button>
+          <button class="sbtn" id="saySentence">💬 Hear it in a sentence</button>
+        </div>
+        <div class="defn"><b>Meaning:</b> <span id="spDef"></span></div>
+        <div class="defn"><b>Sentence:</b> <span id="spSent"></span></div>
+        <div class="spellin">
+          <input id="spInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type the word…">
+          <button class="big go small" id="spCheck">Check ✔</button>
+        </div>
+      </div>
+
+      <div class="qtools">
+        <button class="link" id="hintBtn">💡 Need a hint?</button>
+        <div class="hint" id="hintBox"></div>
+      </div>
+
+      <div class="feedback" id="feedback">
+        <div class="fbhead" id="fbHead"></div>
+        <div class="fbdiff" id="fbDiff"></div>
+        <div class="learn"><div class="learnt">📘 Learn it</div><div id="fbExplain"></div></div>
+        <button class="big go" id="nextBtn">Next ▶</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESULTS ===== -->
+<section id="scr-results" class="screen">
+  <div class="card results">
+    <div class="failbanner" id="failBanner">
+      <div class="fx">❌</div>
+      <div><b>YOU FAILED</b><span>You need <b>8 out of 10 (80%)</b> to unlock the race. Read your revision notes, then try again!</span></div>
+    </div>
+    <h2 id="resTitle">Quiz complete!</h2>
+    <div class="stars" id="resStars"></div>
+    <div class="bigscore"><span id="resScore">0</span><small>/10</small></div>
+    <p id="resMsg" class="sub"></p>
+    <div class="reward" id="resReward"></div>
+    <details class="review" open>
+      <summary>📒 Your revision notes — everything you learned</summary>
+      <div id="resList"></div>
+    </details>
+    <button class="big go race" id="toRaceBtn">🏎️ Start the race vs Jo Jo Johnson!</button>
+    <button class="big alt retry" id="retryBtn">🔁 Try the quiz again</button>
+  </div>
+</section>
+
+<!-- ===== RACE ===== -->
+<section id="scr-race" class="screen race-screen">
+  <canvas id="game"></canvas>
+  <div id="hud">
+    <div class="h-time"><small>TIME LEFT</small><span id="hTime">5:00.0</span></div>
+    <div class="h-pos"><span id="hPos">1st</span><small id="hGap">side by side</small></div>
+    <div class="h-lap"><small>LAP</small><span id="hLap">1</span></div>
+    <div class="h-progress"><div class="track"><div class="dot me" id="pMe"></div><div class="dot jo" id="pJo"></div></div></div>
+    <div class="h-speed"><span id="hSpeed">0</span><small>km/h</small><div class="boostbar"><div id="hBoost"></div></div></div>
+    <div class="h-turbo" id="hTurbo">⚡ TURBO × <b id="hTurboN">0</b> <small>(SPACE)</small></div>
+    <div class="toast" id="toast"></div>
+    <div class="countdown" id="countdown"></div>
+  </div>
+  <!-- steering wheel + pedals (mouse or touch) -->
+  <div id="controls">
+    <div id="wheel" class="wheel" title="Drag to steer">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="rimG" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#5a5a66"/><stop offset=".5" stop-color="#26262e"/><stop offset="1" stop-color="#0c0c10"/></radialGradient>
+          <linearGradient id="spokeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9dde5"/><stop offset=".5" stop-color="#8b919c"/><stop offset="1" stop-color="#4b505a"/></linearGradient>
+          <radialGradient id="hubG" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ff7aa5"/><stop offset="1" stop-color="#a3123f"/></radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="url(#rimG)" stroke-width="22"/>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2" stroke-dasharray="3 6"/>
+        <path d="M28 92 Q100 70 172 92 L172 112 Q100 96 28 112 Z" fill="url(#spokeG)"/>
+        <path d="M90 110 L110 110 L116 182 L84 182 Z" fill="url(#spokeG)"/>
+        <circle cx="100" cy="102" r="30" fill="url(#hubG)" stroke="#111" stroke-width="3"/>
+        <text x="100" y="110" text-anchor="middle" font-size="22" font-weight="700" fill="#fff" font-family="Fredoka, Arial">BR</text>
+        <rect x="94" y="4" width="12" height="22" rx="3" fill="#ffd60a"/>
+      </svg>
+    </div>
+    <div class="pedals">
+      <button id="turboBtn" class="turbo-btn">⚡<small>TURBO</small></button>
+      <div class="pedal brake" data-k="down"><div class="pad"></div><span>BRAKE</span></div>
+      <div class="pedal gas" data-k="up"><div class="pad"></div><span>GAS</span></div>
+    </div>
+  </div>
+  <div class="overlay" id="raceIntro">
+    <div class="card">
+      <h2>🏁 The Big Race</h2>
+      <div class="vs"><div class="drv me"><div class="car">🏎️</div><b id="introName">You</b></div><div class="vsx">VS</div><div class="drv jo"><div class="car">🚗</div><b>Jo Jo Johnson</b></div></div>
+      <ul class="rules">
+        <li>⏱️ The race lasts <b>5 minutes</b>. Whoever has driven <b>furthest</b> when time runs out wins!</li>
+        <li>⚡ Drive over the glowing <b>speed power-ups</b> for <b>+1× speed (double!) for 3 seconds</b>.</li>
+        <li>🎓 Your quiz score earned you <b id="introTurbo">0</b> turbo boosts — press <b>SPACE</b> to use one.</li>
+        <li>🌳 Stay on the road — grass slows you down and trees stop you!</li>
+      </ul>
+      <div class="keys">🕹️ Drive with the on-screen <b>steering wheel</b> (drag it) and the <b>GAS / BRAKE pedals</b> — or the keyboard:<br><span>⬆ / W</span> gas <span>⬇ / S</span> brake <span>⬅ ➡ / A D</span> steer <span>SPACE</span> turbo <span>P</span> pause</div>
+      <button class="big go" id="raceGo">Start engines! 🚦</button>
+    </div>
+  </div>
+  <div class="overlay hidden" id="pauseOv"><div class="card"><h2>⏸ Paused</h2><button class="big go" id="resumeBtn">Resume</button><button class="link" id="quitBtn">Quit race</button></div></div>
+  <div class="overlay hidden" id="raceEnd">
+    <div class="card results">
+      <h2 id="endTitle"></h2>
+      <div id="endPodium" class="podium"></div>
+      <div id="endStats" class="endstats"></div>
+      <div class="row">
+        <button class="big go" id="againBtn">🔁 Race again</button>
+        <button class="big alt" id="newQuizBtn">📚 New quiz</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="content.js"></script>
+<script src="audio.js"></script>
+<script src="race.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
