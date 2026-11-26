@@ -35,10 +35,6 @@ const Confetti = (() => {
 })();
 window.Confetti = Confetti;
 
-// ---------- Rick Roll: opens on YouTube when you press Next after a wrong answer ----------
-const RICKROLL_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-function rickRoll() { window.open(RICKROLL_URL, "_blank"); }
-
 // ---------- app state ----------
 const PASS_MARK = 8; // 8 out of 10 = 80%
 const S = { attempts: 0, name: "You", year: 5, subject: "maths", quiz: [], i: 0, score: 0, streak: 0, best: 0, answered: false, hintUsed: false, log: [] };
@@ -208,13 +204,11 @@ function result(ok, extra, explain, qText, answer, given) {
   setTimeout(() => $("nextBtn").focus(), 50);
   S.log.push({ ok, q: qText, answer, given, explain });
   if (!ok && S.quiz[S.i].type === "spell") say(answer);
-  S.lastWrong = !ok;
 }
 
 $("nextBtn").onclick = next;
 function next() {
   Sfx.click();
-  if (S.lastWrong) { S.lastWrong = false; rickRoll(); }
   if (S.i < 9) { S.i++; renderQuestion(); }
   else showResults();
 }
